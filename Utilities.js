@@ -1,3 +1,6 @@
+/**
+ * A miscellaneous assortment of methods/utilities
+ */
 export default class Utilities {
 	/**
 	 * @param {string} camelCase
