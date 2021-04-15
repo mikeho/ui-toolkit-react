@@ -205,6 +205,8 @@ export default class Table extends Component {
 			}
 		}
 
+		const children = this.props.children ? (this.props.children.length ? this.props.children : [this.props.children]) : null;
+
 		return (
 			<Container fluid>
 				{this.props.itemsPerPage && this.renderPaginator()}
@@ -212,13 +214,13 @@ export default class Table extends Component {
 					<ReactBootstrapTable striped={this.props.striped === true} hover={this.props.hover === true}>
 						<thead>
 							<tr>
-								{this.props.children.map(child => {
+								{children ? children.map(child => {
 									if (child.type === Header) {
 										return child;
 									}
 
 									return null;
-								})}
+								}) : null}
 							</tr>
 						</thead>
 						{this.renderItems()}
