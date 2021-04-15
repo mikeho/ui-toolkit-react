@@ -236,6 +236,8 @@ Table.propTypes = {
 	children: PropTypes.node.isRequired,
 	renderItem: PropTypes.func.isRequired,
 
+	key: PropTypes.string,
+
 	queryData: PropTypes.func,
 	dataSource: PropTypes.array,
 
