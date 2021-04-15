@@ -198,14 +198,21 @@ export default class Table extends Component {
 				return this.props.renderNoData();
 			} else {
 				return (
-					<Container fluid>
+					<>
 						{this.props.renderNoDataText}
-					</Container>
+					</>
 				);
 			}
 		}
 
-		const children = this.props.children ? (this.props.children.length ? this.props.children : [this.props.children]) : null;
+		let children = [];
+		if (this.props.children) {
+			if (this.props.children.length) {
+				children = this.props.children.filter(child => (child.type === Header));
+			} else if (this.props.children.type === Header) {
+				children = [this.props.children];
+			}
+		}
 
 		return (
 			<Container fluid>
@@ -214,13 +221,7 @@ export default class Table extends Component {
 					<ReactBootstrapTable striped={this.props.striped === true} hover={this.props.hover === true}>
 						<thead>
 							<tr>
-								{children ? children.map(child => {
-									if (child.type === Header) {
-										return child;
-									}
-
-									return null;
-								}) : null}
+								{children}
 							</tr>
 						</thead>
 						{this.renderItems()}
