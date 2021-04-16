@@ -59,5 +59,144 @@ And then depending on the _type_ of FormikControl, each one may have additional 
 * `FormikControl.Select` — for dropdowns
 	* additional `<option>` tags as children
 
+An example of using FormikControls within a FormikForm:
+
+```
+<Formik
+	initialValues={{
+		username: '',
+		password: '',
+		remember: false,
+	}}
+	validationSchema={Yup.object().shape({
+		username: Yup.string()
+			.required('Your username is required'),
+		password: Yup.string()
+			.min(6, 'Password must be at least 6 characters')
+			.required('Password is required'),
+	})}
+	onSubmit={form_Submit}
+>
+	<Form>
+		<FormikControl.Input name="username" type="text" label="Your Username" placeholder="Please enter your username"/>
+		<FormikControl.Input name="password" type="password" label="Password"/>
+		<FormikControl.Checkbox name="remember" label="Remember Your Username?" caption="Click here to remember your username for next time"/>
+
+		<Button variant="primary" type="submit">
+				Log In
+		</Button>
+	</Form>
+</Formik>
+```
+
 ## DataGrid
 
+The DataGrid can be used to bind an array of items (which can be objects, strings, etc.) to be displayed in a React Bootstrap `Table` component.
+
+It consists of two components:
+
+* `DataGrid.Table` -- this is the table itself
+* `DataGrid.Header` -- this defines each header cell (`<th>`) within the header row (`<thead><tr>...</tr></thead>`)
+
+The rows within the body of the table (`<tbody>...</tbody>`) is defined using a custom render function that you will need to provide as a prop to `DataGrid.Table`.
+
+Note: It is **_strongly recommended_** that you specify a `key` for each `DataGrid.Table`, especially if you have pages that will dynamically generate/switch between rendering different `DataGrid.Table` components.
+
+### Setup
+
+To set up, at a minimum you need to include the following:
+* how to render each item
+* the data to render (where the data needs to be an array of items)
+
+So the most basic, simple table could be as easy as:
+
+```
+<DataGrid.Table
+	key="fruits"
+	dataSource={[
+		{id: 1, fruit: 'Apple'},
+		{id: 2, fruit: 'Banana'},
+		{id: 3, fruit: 'Cherries'},
+	]}
+	renderItem={(fruitItem, index) => (
+		<tr key={'fruits-row-' + index}>
+			<td>{fruitItem.id}</td>
+			<td>{fruitItem.fruit}</td>
+		</tr>
+	)}
+/>
+```
+
+### Header Row
+
+You can add a header row by defining one or more `DataGrid.Header` components which would make up the cells for each column in the header row.
+
+```
+const fruitArray = [
+	{id: 1, fruit: 'Apple'},
+	{id: 2, fruit: 'Banana'},
+	{id: 3, fruit: 'Cherries'},
+];
+
+function renderFruitItem(fruit, index, table) {
+	return (
+		<tr key={'fruits-row-' + index}>
+			<td>{fruitItem.id}</td>
+			<td>{fruitItem.fruit}</td>
+		</tr>
+	);
+};
+```
+```
+<DataGrid.Table key="fruits" dataSource={fruitArray} renderItem={renderFruitItem}>
+	<DataGrid.Header label="Identifier"/>
+	<DataGrid.Header label="Fruit Name"/>
+</DataGrid.Table>
+```
+
+### Data Binding
+
+There are two ways to provide data to the `DataGrid.Table`.  You can simply set `dataSource` to be an array of items (as seen above).  This is the preferred approach for simple datagrids, especially when:
+
+* the array is already available (e.g. you won't need to make an async webservice call to get that data)
+* you don't need to worry about sorting or pagination (e.g. you want to always display all of the data)
+
+However, sometimes you need a bit more power.  In those cases, instad of specifying an explicit `dataSource`, you can specify a `queryData` function.
+
+The `queryData` function you define must take in two parameters:
+
+* `bindData` -- this is a function callback that your `queryData` function must call when the array of items is ready
+* `setupRequest` -- this is a function callback that your `queryData` function may call to set up pagination and sorting parameters to your API request object
+
+```
+<DataGrid.Table key="fruits" queryData={myQueryData} renderItem={renderFruitItem}>
+	<DataGrid.Header label="Identifier"/>
+	<DataGrid.Header label="Fruit Name"/>
+</DataGrid.Table>
+```
+```
+function myQueryData(bindData, setupRequest) {
+	const fruitSearchRequest = {
+		...
+	};
+	
+	// optionally add pagination/sorting parameters to my request
+	setupRequest(fruitSearchRequest);
+	
+	Client.FruitApi.SearchForFruit(fruitSearchRequest, {
+		status200: fruitArray => {
+			bindData(fruitArray);
+		}
+	});
+}
+```
+
+### Pagination 
+
+`DataGrid.Table` provides an easy way to add pagination.  Note that all pagination is done via the server -- so any API request that can support paginating results will take in pagination parameters.
+
+The request object you pass in can have its pagination parameters set up by calling the `setupRequest` callback that is passed to your `queryData` function.
+
+### Sorting
+
+TBD
