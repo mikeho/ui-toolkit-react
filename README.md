@@ -163,10 +163,10 @@ There are two ways to provide data to the `DataGrid.Table`.  You can simply set 
 
 However, sometimes you need a bit more power.  In those cases, instad of specifying an explicit `dataSource`, you can specify a `queryData` function.
 
-The `queryData` function you define must take in two parameters:
+The `queryData` function you define must take in the `Table` itself as a parameter.  This allows you to call one of two methods available on your `Table`:
 
-* `bindData` -- this is a function callback that your `queryData` function must call when the array of items is ready
-* `setupRequest` -- this is a function callback that your `queryData` function may call to set up pagination and sorting parameters to your API request object
+* `bindData(items, totalCount)` -- this is the function your `queryData` function _must_ call when the array of items is ready for your `Table` to start rendering.  `items` is required.  `totalCount` is required only if you are paginating the results (see "Pagination" below)
+* `getResultParameter` -- if you are optionally using Pagination and/or Sorting, then you call this method to have the `Table` calculate the `ResultParameter` to use.  You pass this into your Qcodo API call that accepts a `ResultParameter`, to have the API add the appropriate `ORDER BY` and `LIMIT` clauses to its database query
 
 ```
 <DataGrid.Table key="fruits" queryData={myQueryData} renderItem={renderFruitItem}>
@@ -175,17 +175,17 @@ The `queryData` function you define must take in two parameters:
 </DataGrid.Table>
 ```
 ```
-function myQueryData(bindData, setupRequest) {
+function myQueryData(table) {
 	const fruitSearchRequest = {
 		...
 	};
 	
 	// optionally add pagination/sorting parameters to my request
-	setupRequest(fruitSearchRequest);
+	fruitSearchRequest.resultParameter = table.getResultParameter();
 	
 	Client.FruitApi.SearchForFruit(fruitSearchRequest, {
 		status200: fruitArray => {
-			bindData(fruitArray);
+			table.bindData(fruitArray);
 		}
 	});
 }
@@ -195,7 +195,7 @@ function myQueryData(bindData, setupRequest) {
 
 `DataGrid.Table` provides an easy way to add pagination.  Note that all pagination is done via the server -- so any API request that can support paginating results will take in pagination parameters.
 
-The request object you pass in can have its pagination parameters set up by calling the `setupRequest` callback that is passed to your `queryData` function.
+The request object you pass in can have its pagination parameters set up by setting up the resultParameter as the result of `getResultParameter()` call to the Table object you are rendering.
 
 ### Sorting
 

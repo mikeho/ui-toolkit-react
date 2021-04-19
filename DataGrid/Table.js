@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from "prop-types";
 import {Col, Container, FormControl, Pagination, Row, Table as ReactBootstrapTable} from "react-bootstrap";
 import Header from "./Header";
+import ResultParameter from "../../models/ResultParameter"
 
 export default class Table extends Component {
 	constructor(props) {
@@ -31,7 +32,7 @@ export default class Table extends Component {
 
 	componentDidMount() {
 		if (this.props.queryData) {
-			this.props.queryData(this.bindData, this.setupRequest);
+			this.props.queryData(this);
 		} else if (this.props.dataSource) {
 			this.setState({
 				items: this.props.dataSource,
@@ -51,18 +52,22 @@ export default class Table extends Component {
 	}
 
 	/**
-	 * @param {ModelBaseClass} request
+	 * @return {ResultParameter}
 	 */
-	setupRequest = (request) => {
+	getResultParameter = () => {
+		const resultParameter = new ResultParameter();
+
 		if (this.props.itemsPerPage > 0) {
-			request.resultsLimitCount = this.props.itemsPerPage;
-			request.resultsLimitOffset = (this.state.pageNumber - 1) * this.props.itemsPerPage;
+			resultParameter.resultsLimitCount = this.props.itemsPerPage;
+			resultParameter.resultsLimitOffset = (this.state.pageNumber - 1) * this.props.itemsPerPage;
 		}
 
 		if (this.state.orderByToken) {
-			request.resultsOrderBy = this.state.orderByToken;
-			request.resultsOrderAscending = this.state.orderAscendingFlag;
+			resultParameter.resultsOrderBy = this.state.orderByToken;
+			resultParameter.resultsOrderAscending = this.state.orderAscendingFlag;
 		}
+
+		return resultParameter;
 	}
 
 	reload = () => {
@@ -76,7 +81,7 @@ export default class Table extends Component {
 			pageNumber: 1,
 			pageNumberText: 1
 		}, () => {
-			this.props.queryData(this.bindData, this.setupRequest);
+			this.props.queryData(this);
 		});
 	}
 
@@ -113,7 +118,7 @@ export default class Table extends Component {
 				pageNumber: pageNumber,
 				pageNumberText: pageNumber
 			}, () => {
-				this.props.queryData(this.bindData, this.setupRequest);
+				this.props.queryData(this);
 			});
 		}
 	}
