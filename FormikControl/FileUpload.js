@@ -4,7 +4,7 @@ import {Form, Button, InputGroup} from "react-bootstrap";
 import {ErrorMessage, useField} from "formik";
 import ExistingFile from "./ExistingFile";
 
-const FileUpload = ({ label, ...props }) => {
+const FileUpload = ({ label, instructions, ...props }) => {
 	const [field, meta, helpers] = useField(props);
 
 	const fileControl = React.createRef();
@@ -84,6 +84,9 @@ const FileUpload = ({ label, ...props }) => {
 				<input style={{display: 'none'}} id={field.name} name={field.name} type="file" ref={fileControl} onChange={file_Submitted}/>
 
 			</InputGroup>
+
+			{instructions && (<Form.Text className="text-muted">{instructions}</Form.Text>)}
+
 		</Form.Group>
 	);
 };
@@ -93,5 +96,5 @@ export default FileUpload;
 FileUpload.propTypes = {
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
-
+	instructions: PropTypes.string,
 };

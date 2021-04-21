@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import {Form} from "react-bootstrap";
 import {ErrorMessage, useField, Field} from "formik";
 
-const Checkbox = ({ label, caption, ...props }) => {
+const Checkbox = ({ label, instructions, caption, ...props }) => {
 	const [field, meta, helpers] = useField(props);
 
 	return (
@@ -18,6 +18,7 @@ const Checkbox = ({ label, caption, ...props }) => {
 				) : null}
 				<ErrorMessage {...field} component="div" className="invalid-feedback"/>
 			</div>
+			{instructions && (<Form.Text className="text-muted">{instructions}</Form.Text>)}
 		</Form.Group>
 	);
 };
@@ -27,6 +28,7 @@ export default Checkbox;
 Checkbox.propTypes = {
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
+	instructions: PropTypes.string,
 
 	caption: PropTypes.string,
 };
