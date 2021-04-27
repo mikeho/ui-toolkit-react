@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import {Form} from "react-bootstrap";
 import {ErrorMessage, useField} from "formik";
 
-const Input = ({ label, instructions, type, placeholder, ...props }) => {
+const Input = ({ label, instructions, disabled, type, placeholder, ...props }) => {
 	const [field, meta, helpers] = useField(props);
 
 	return (
@@ -11,7 +11,7 @@ const Input = ({ label, instructions, type, placeholder, ...props }) => {
 			{label ? (
 				<Form.Label>{label}</Form.Label>
 			) : null}
-			<Form.Control type={type} placeholder={placeholder} {...field} className={meta.error && meta.touched ? ' is-invalid' : ''}/>
+			<Form.Control type={type} placeholder={placeholder} disabled={disabled} {...field} className={meta.error && meta.touched ? ' is-invalid' : ''}/>
 			<ErrorMessage {...field} component="div" className="invalid-feedback"/>
 			{instructions && (<Form.Text className="text-muted">{instructions}</Form.Text>)}
 		</Form.Group>
@@ -24,6 +24,7 @@ Input.propTypes = {
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
 	instructions: PropTypes.string,
+	disabled: PropTypes.booleanValue,
 
 	type: PropTypes.string.isRequired,
 	placeholder: PropTypes.string,

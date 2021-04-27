@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import {Form} from "react-bootstrap";
 import {ErrorMessage, useField, Field} from "formik";
 
-const Select = ({ label, instructions, ...props }) => {
+const Select = ({ label, instructions, disabled, ...props }) => {
 	const [field, meta, helpers] = useField(props);
 
 	return (
@@ -11,7 +11,7 @@ const Select = ({ label, instructions, ...props }) => {
 			{label ? (
 				<Form.Label>{label}</Form.Label>
 			) : null}
-			<Field as="select" id={field.name} name={field.name} className={'form-control ' + (meta.error && meta.touched ? ' is-invalid' : '')}>
+			<Field as="select" id={field.name} name={field.name} disabled={disabled} className={'form-control ' + (meta.error && meta.touched ? ' is-invalid' : '')}>
 				{props.children}
 			</Field>
 			<ErrorMessage {...field} component="div" className="invalid-feedback"/>
@@ -26,6 +26,7 @@ Select.propTypes = {
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
 	instructions: PropTypes.string,
+	disabled: PropTypes.booleanValue,
 
 	children: PropTypes.array,
 };
