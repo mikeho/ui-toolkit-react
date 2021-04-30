@@ -12,7 +12,7 @@ const Checkbox = ({ label, instructions, disabled, caption, ...props }) => {
 				<Form.Label>{label}</Form.Label>
 			) : null}
 			<div className="form-check">
-				<Field type="checkbox" id={field.name} name={field.name} disabled={disabled} className={'form-check-input ' + (meta.error && meta.touched ? ' is-invalid' : '')} />
+				<Field type="checkbox" id={field.name} name={field.name} disabled={!!disabled} className={'form-check-input ' + (meta.error && meta.touched ? ' is-invalid' : '')} />
 				{caption ? (
 					<label htmlFor={field.name} className="form-check-label">{caption}</label>
 				) : null}
@@ -29,7 +29,7 @@ Checkbox.propTypes = {
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
 	instructions: PropTypes.string,
-	disabled: PropTypes.booleanValue,
+	disabled: PropTypes.bool,
 
 	caption: PropTypes.string,
 };

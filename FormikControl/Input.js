@@ -11,7 +11,7 @@ const Input = ({ label, instructions, disabled, type, placeholder, ...props }) =
 			{label ? (
 				<Form.Label>{label}</Form.Label>
 			) : null}
-			<Form.Control type={type} placeholder={placeholder} disabled={disabled} {...field} className={meta.error && meta.touched ? ' is-invalid' : ''}/>
+			<Form.Control type={type} placeholder={placeholder} disabled={!!disabled} {...field} className={meta.error && meta.touched ? ' is-invalid' : ''}/>
 			<ErrorMessage {...field} component="div" className="invalid-feedback"/>
 			{instructions && (<Form.Text className="text-muted">{instructions}</Form.Text>)}
 		</Form.Group>
@@ -24,7 +24,7 @@ Input.propTypes = {
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
 	instructions: PropTypes.string,
-	disabled: PropTypes.booleanValue,
+	disabled: PropTypes.bool,
 
 	type: PropTypes.string.isRequired,
 	placeholder: PropTypes.string,
