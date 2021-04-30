@@ -191,11 +191,19 @@ function myQueryData(table) {
 }
 ```
 
+##### Reloading/Rerunning `queryData`
+
+If you are using the `queryData` approach, you may find that you need to re-run the method.  A typical example of this is if you have search filters in your UI.  Whenever the user changes/adds/removes a search filter, you may want to re-run `queryData` to take those filters into account.
+
+To do this, you can call `.reload()` on the datagrid itself.  The recommended approach would be to store a ref of the datagrid, and then you can call `.reload()` on the ref.
+
 ### Pagination 
 
 `DataGrid.Table` provides an easy way to add pagination.  Note that all pagination is done via the server -- so any API request that can support paginating results will take in pagination parameters.
 
-The request object you pass in can have its pagination parameters set up by setting up the resultParameter as the result of `getResultParameter()` call to the Table object you are rendering.
+To enable pagination, set the `itemsPerPage` prop to the number of items you want to render per page.  Then, the request object that you pass in to a Qcodo-based API call can have its pagination parameters set up by calling the `setupRequest` callback that is passed to your `queryData` function.
+
+Note, the Swagger definition typically has it so that the request object you pass in can have its pagination parameters set up by setting up the resultParameter as the result of `getResultParameter()` call to the Table object you are rendering.
 
 ### Sorting
 
