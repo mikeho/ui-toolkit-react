@@ -4,6 +4,7 @@ import Select from "./Select";
 import FileUpload from "./FileUpload";
 
 import ExistingFile from "./ExistingFile";
+import InputFilter from "./InputFilter";
 
 export const FormikControl = {
 	Input,
@@ -12,4 +13,5 @@ export const FormikControl = {
 	FileUpload,
 
 	ExistingFile,
+	InputFilter,
 };

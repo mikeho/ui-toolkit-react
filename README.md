@@ -51,6 +51,7 @@ And then depending on the _type_ of FormikControl, each one may have additional 
 * `FormikControl.Input` — primarily for text-based input
 	* a required `type`, which is `text`, `password`, etc.
 	* an optional `placeholder`
+	* an optional `filter`, which is a `FormikControl.InputFilter` object that you can provide filtering rules for
 * `FormikControl.Checkbox` — for checkboxes
 	* an optional `caption` which is displayed to the right of the checkbox
 * `FormikControl.FileUpload` — for file uploads

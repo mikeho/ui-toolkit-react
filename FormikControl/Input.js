@@ -2,9 +2,23 @@ import React from 'react';
 import PropTypes from "prop-types";
 import {Form} from "react-bootstrap";
 import {ErrorMessage, useField} from "formik";
+import InputFilter from "./InputFilter";
 
 const Input = ({ label, instructions, disabled, type, placeholder, ...props }) => {
 	const [field, meta, helpers] = useField(props);
+
+	if (props.onChange || props.filter) {
+		const defaultOnChange = field.onChange;
+		field.onChange = e => {
+			if (props.onChange) {
+				props.onChange(e);
+			}
+			if (props.filter) {
+				props.filter.handleChange(e);
+			}
+			defaultOnChange(e);
+		};
+	}
 
 	return (
 		<Form.Group controlId={field.name}>
@@ -28,4 +42,6 @@ Input.propTypes = {
 
 	type: PropTypes.string.isRequired,
 	placeholder: PropTypes.string,
+	onChange: PropTypes.func,
+	filter: PropTypes.instanceOf(InputFilter),
 };
