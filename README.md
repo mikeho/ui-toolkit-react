@@ -155,6 +155,23 @@ function renderFruitItem(fruit, index, table) {
 </DataGrid.Table>
 ```
 
+#### Custom Header Cells
+
+By default, the each column's Header Cell in the Header Row will simply display the label of the Header, and if sorting is enabled for that column, it will include the UI and click handlers to perform sorting.
+
+If you need to ever define your own custom render method for a specific cell, you can do so using a render method.
+
+```
+<DataGrid.Table key="fruits" dataSource={fruitArray} renderItem={renderFruitItem}>
+	<DataGrid.Header label="Identifier" render={table => {
+		return (
+			<th>My Custom Header Cell</th>
+		);
+	}}/>
+	<DataGrid.Header label="Fruit Name"/>
+</DataGrid.Table>
+```
+
 ### Data Binding
 
 There are two ways to provide data to the `DataGrid.Table`.  You can simply set `dataSource` to be an array of items (as seen above).  This is the preferred approach for simple datagrids, especially when:
