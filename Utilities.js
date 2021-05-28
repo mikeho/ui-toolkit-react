@@ -30,6 +30,14 @@ export default class Utilities {
 	}
 
 	/**
+	 * @param {Date} date
+	 * @return {string}
+	 */
+	static displayDateTime(date) {
+		return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+	}
+
+	/**
 	 * @param {File} file
 	 * @param {function} callback
 	 * @param {function} errorCallback
