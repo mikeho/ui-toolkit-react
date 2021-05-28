@@ -225,4 +225,17 @@ Note, the Swagger definition typically has it so that the request object you pas
 
 ### Sorting
 
-TBD
+`DataGrid.Table` also provides an easy way to managing sorting.  It allows you to define a "Token" for each column that can be sorted, and provides the UI to manage which column is currently being sorted, and which direction (e.g. ascending or descending).  It can then expose that Token so that your `queryData` function can use that `orderByToken` of the currently selected column.
+
+To set this up, simply add the `orderByToken` to each `DataGrid.Header` you want to enable sorting on.  And then, if you want to select an initial column / direction to sort by when the DataGrid is first rendered, you can set those as `orderByToken` and `orderAscendingFlag` props on the `DataGrid.Table` itself.
+
+```
+<DataGrid.Table key="fruits" queryData={myQueryData} renderItem={renderFruitItem} orderByToken="Fruit" orderAscendingFlag={false}>
+    <DataGrid.Header label="Identifier" orderByToken="CodeName"/>
+    <DataGrid.Header label="Fruit Name" orderByToken="Fruit"/>
+</DataGrid.Table>
+```
+
+For server-side API calls, the Swagger definition typically has it so that the request object you pass in can have its sorting parameters set up by setting up the resultParameter as the result of `getResultParameter()` call to the Table object you are rendering.
+
+If performing a client-side API call, you would need to implement your own sorting logic in a custom `queryData` method.  You can look up the currently selected `orderByToken` by calling `getResultParameter().resultsOrderBy` on the `DataGrid.Table`.

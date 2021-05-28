@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from "prop-types";
 import {Col, Container, FormControl, Pagination, Row, Table as ReactBootstrapTable} from "react-bootstrap";
 import Header from "./Header";
-import ResultParameter from "../../models/ResultParameter"
+import ResultParameter from "../../models/ResultParameter";
 
 export default class Table extends Component {
 	constructor(props) {
@@ -41,6 +41,21 @@ export default class Table extends Component {
 		} else {
 			console.error('No queryData method or dataSource provided');
 		}
+	}
+
+	/**
+	 * @param {string} orderByToken
+	 */
+	orderByClick = (orderByToken) => {
+		if (this.state.orderByToken === orderByToken) {
+			const orderAscendingFlag = !this.state.orderAscendingFlag;
+			this.setState({orderAscendingFlag});
+		} else {
+			const orderAscendingFlag = true;
+			this.setState({orderByToken, orderAscendingFlag});
+		}
+
+		this.reload();
 	}
 
 	/**
@@ -226,7 +241,13 @@ export default class Table extends Component {
 					<ReactBootstrapTable striped={this.props.striped === true} hover={this.props.hover === true}>
 						<thead>
 							<tr>
-								{children}
+								{React.Children.map(children, (child) =>
+									React.cloneElement(child, {
+										orderByClick: this.orderByClick,
+										currentOrderByToken: this.state.orderByToken,
+										currentOrderByAscendingFlag: this.state.orderAscendingFlag
+									})
+								)}
 							</tr>
 						</thead>
 						{this.renderItems()}
