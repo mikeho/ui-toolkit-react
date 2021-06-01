@@ -18,6 +18,7 @@ export default class Utilities {
 	 * @return {string}
 	 */
 	static displayDate(date) {
+		if (!date) return '';
 		return date.toLocaleDateString();
 	}
 
@@ -26,6 +27,7 @@ export default class Utilities {
 	 * @return {string}
 	 */
 	static displayTime(date) {
+		if (!date) return '';
 		return date.toLocaleTimeString();
 	}
 
@@ -34,6 +36,7 @@ export default class Utilities {
 	 * @return {string}
 	 */
 	static displayDateTime(date) {
+		if (!date) return '';
 		return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
 	}
 
