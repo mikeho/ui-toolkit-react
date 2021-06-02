@@ -9,6 +9,7 @@ export default class Utilities {
 	 * @return {string}
 	 */
 	static sentenceCaseFromCamelCase(camelCase) {
+		if (!camelCase) return '';
 		const result = camelCase.replace(/([A-Z])/g, " $1");
 		return result.trim();
 	}
@@ -72,6 +73,8 @@ export default class Utilities {
 	static getLineArray(text) {
 		const returnArray = [];
 
+		if (!text) return returnArray;
+
 		text.trim().split("\n").forEach(line => {
 			if (line.trim().length) {
 				returnArray.push(line.trim());
@@ -89,6 +92,8 @@ export default class Utilities {
 	 * @return {React.Fragment[]}
 	 */
 	static renderTextBlock(text) {
+		if (!text) return null;
+
 		const lineArray = [];
 
 		text.trim().split("\n").forEach(line => {
@@ -119,6 +124,8 @@ export default class Utilities {
 	 * @return {string}
 	 */
 	static parsePhone(text) {
+		if (!text) return '';
+
 		text = text.replace(/\D/g, '');
 
 		if (text.length > 10) {
