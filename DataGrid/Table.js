@@ -238,7 +238,15 @@ export default class Table extends Component {
 			<Container fluid>
 				{this.props.itemsPerPage && this.renderPaginator()}
 				<Row>
-					<ReactBootstrapTable striped={this.props.striped === true} hover={this.props.hover === true}>
+					<ReactBootstrapTable
+						bordered={this.props.bordered === true}
+						borderless={this.props.borderless === true}
+						striped={this.props.striped === true}
+						hover={this.props.hover === true}
+						size={this.props.size !== undefined ? this.props.size : null}
+						variant={this.props.variant !== undefined ? this.props.variant : null}
+						responsive={this.props.responsive !== undefined ? this.props.responsive : null}
+					>
 						<thead>
 							<tr>
 								{React.Children.map(children, (child) =>
@@ -274,6 +282,11 @@ Table.propTypes = {
 	orderByToken: PropTypes.string,
 	orderAscendingFlag: PropTypes.bool,
 
+	bordered: PropTypes.bool,
+	borderless: PropTypes.bool,
 	striped: PropTypes.bool,
 	hover: PropTypes.bool,
+	size: PropTypes.string,
+	variant: PropTypes.string,
+	responsive: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 };
