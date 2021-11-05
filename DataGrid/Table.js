@@ -239,6 +239,7 @@ export default class Table extends Component {
 				{this.props.itemsPerPage && this.renderPaginator()}
 				<Row>
 					<ReactBootstrapTable
+						className={this.props.className !== undefined ? this.props.className : null}
 						bordered={this.props.bordered === true}
 						borderless={this.props.borderless === true}
 						striped={this.props.striped === true}
@@ -283,6 +284,7 @@ Table.propTypes = {
 	orderByToken: PropTypes.string,
 	orderAscendingFlag: PropTypes.bool,
 
+	className: PropTypes.any,
 	bordered: PropTypes.bool,
 	borderless: PropTypes.bool,
 	striped: PropTypes.bool,
