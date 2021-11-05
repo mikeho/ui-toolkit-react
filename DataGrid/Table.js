@@ -258,7 +258,7 @@ export default class Table extends Component {
 								)}
 							</tr>
 						</thead>
-						{this.renderItems()}
+						{(!this.state.items.length && this.props.renderNoDataTr) ? this.props.renderNoDataTr() : this.renderItems()}
 					</ReactBootstrapTable>
 				</Row>
 			</Container>
@@ -275,6 +275,7 @@ Table.propTypes = {
 
 	renderNoData: PropTypes.func,
 	renderNoDataText: PropTypes.string,
+	renderNoDataTr: PropTypes.func,
 
 	itemsPerPage: PropTypes.number,
 
