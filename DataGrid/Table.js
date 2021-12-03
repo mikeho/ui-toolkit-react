@@ -5,12 +5,16 @@ import Header from "./Header";
 import ResultParameter from "../../models/ResultParameter";
 
 export default class Table extends Component {
+	static DisplayItemsPerPageSelector = false;
+	static DisplayItemsPerPageCount = 25;
+
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			items: null,
 			totalCount: null,
+			itemsPerPage: Table.DisplayItemsPerPageCount,
 
 			pageNumberText: (this.props.pageNumber > 1) ? this.props.pageNumber : 1,
 			pageNumber: (this.props.pageNumber > 1) ? this.props.pageNumber : 1,
@@ -43,6 +47,18 @@ export default class Table extends Component {
 		}
 	}
 
+	calculateItemsPerPage = () => {
+		if (this.props.itemsPerPageSelector || Table.DisplayItemsPerPageSelector) {
+			return Table.DisplayItemsPerPageCount;
+		}
+
+		if (this.props.itemsPerPage) {
+			return this.props.itemsPerPage;
+		}
+
+		return null;
+	}
+
 	/**
 	 * @param {string} orderByToken
 	 */
@@ -72,9 +88,9 @@ export default class Table extends Component {
 	getResultParameter = () => {
 		const resultParameter = new ResultParameter();
 
-		if (this.props.itemsPerPage > 0) {
-			resultParameter.resultsLimitCount = this.props.itemsPerPage;
-			resultParameter.resultsLimitOffset = (this.state.pageNumber - 1) * this.props.itemsPerPage;
+		if (this.calculateItemsPerPage() > 0) {
+			resultParameter.resultsLimitCount = this.calculateItemsPerPage();
+			resultParameter.resultsLimitOffset = (this.state.pageNumber - 1) * this.calculateItemsPerPage();
 		}
 
 		if (this.state.orderByToken) {
@@ -124,7 +140,7 @@ export default class Table extends Component {
 
 		pageNumber = parseInt(pageNumber);
 
-		if (Number.isNaN(pageNumber) || (pageNumber < 1) || (pageNumber > Math.ceil(this.state.totalCount / this.props.itemsPerPage))) {
+		if (Number.isNaN(pageNumber) || (pageNumber < 1) || (pageNumber > Math.ceil(this.state.totalCount / this.calculateItemsPerPage()))) {
 			this.setState({
 				pageNumberText: this.state.pageNumber
 			});
@@ -151,7 +167,7 @@ export default class Table extends Component {
 	}
 
 	last_Click = () => {
-		this.setPageNumber(Math.ceil(this.state.totalCount / this.props.itemsPerPage));
+		this.setPageNumber(Math.ceil(this.state.totalCount / this.calculateItemsPerPage()));
 	}
 
 	pageNumberText_KeyPress = (event) => {
@@ -171,11 +187,15 @@ export default class Table extends Component {
 	}
 
 	renderPaginator = () => {
+		const pageCount = Math.floor(this.state.totalCount / this.calculateItemsPerPage()) + ((this.calculateItemsPerPage() % this.state.totalCount) ? 1 : 0);
 		return (
 			<Row className="align-items-center">
-				<Col md={6} style={{paddingLeft: '0.75rem'}}>Viewing {(this.state.pageNumber - 1) * this.props.itemsPerPage + 1} to {Math.min(this.state.pageNumber * this.props.itemsPerPage, this.state.totalCount)} of {this.state.totalCount}</Col>
-				{(this.state.totalCount > this.props.itemsPerPage) && (
-					<Col md={6} style={{paddingRight: '0.75rem'}}>
+				<Col md={9} style={{paddingLeft: '0.1rem'}}>
+					Viewing items <strong>{(this.state.pageNumber - 1) * this.calculateItemsPerPage() + 1} - {Math.min(this.state.pageNumber * this.calculateItemsPerPage(), this.state.totalCount)}</strong> of <strong>{this.state.totalCount}</strong> on
+					page <strong>{this.state.pageNumber}</strong> of <strong>{pageCount}</strong>
+				</Col>
+				{(this.state.totalCount > this.calculateItemsPerPage()) && (
+					<Col md={3} style={{paddingRight: 0}}>
 						<Pagination size="sm" className="justify-content-end">
 							<Pagination.First onClick={this.first_Click} />
 							<Pagination.Prev onClick={this.previous_Click} />
@@ -194,6 +214,32 @@ export default class Table extends Component {
 						</Pagination>
 					</Col>
 				)}
+			</Row>
+		);
+	}
+
+	paginatorDropdown_Change = (event) => {
+		const itemsPerPage = parseInt(event.target.value);
+		this.setState({
+			itemsPerPage
+		}, this.reload);
+
+		Table.DisplayItemsPerPageCount = itemsPerPage;
+	}
+
+	renderPaginatorDropdown = () => {
+		return (
+			<Row className="align-items-center">
+				<Col md={6} style={{paddingLeft: '0.1rem'}}>
+					View &nbsp;
+					<select value={this.state.itemsPerPage} onChange={event => this.paginatorDropdown_Change(event)}>
+						<option value="10">10</option>
+						<option value="25">25</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+					</select>
+					&nbsp; items per page
+				</Col>
 			</Row>
 		);
 	}
@@ -236,7 +282,7 @@ export default class Table extends Component {
 
 		return (
 			<Container fluid>
-				{this.props.itemsPerPage && this.renderPaginator()}
+				{this.calculateItemsPerPage() && this.renderPaginator()}
 				<Row>
 					<ReactBootstrapTable
 						className={this.props.className !== undefined ? this.props.className : null}
@@ -262,6 +308,7 @@ export default class Table extends Component {
 						{(!this.state.items.length && this.props.renderNoDataTbody) ? this.props.renderNoDataTbody() : this.renderItems()}
 					</ReactBootstrapTable>
 				</Row>
+				{(this.props.itemsPerPageSelector || Table.DisplayItemsPerPageSelector) ? this.renderPaginatorDropdown() : null}
 			</Container>
 		);
 	}
@@ -279,6 +326,7 @@ Table.propTypes = {
 	renderNoDataTbody: PropTypes.func,
 
 	itemsPerPage: PropTypes.number,
+	itemsPerPageSelector: PropTypes.bool,
 
 	pageNumber: PropTypes.number,
 	orderByToken: PropTypes.string,
