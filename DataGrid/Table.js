@@ -5,7 +5,18 @@ import Header from "./Header";
 import ResultParameter from "../../models/ResultParameter";
 
 export default class Table extends Component {
+	/**
+	 * This is a global setting deciding whether or not we are displaying the ItemsPerPage selector
+	 * This CAN be overridden by the itemsPerPageSelector prop
+	 * @type {boolean}
+	 */
 	static DisplayItemsPerPageSelector = false;
+
+	/**
+	 * This is the global setting of the current Items Per Page count for the selector ONLY
+	 * This is regularly changed whenever the user updates their preference
+	 * @type {number}
+	 */
 	static DisplayItemsPerPageCount = 25;
 
 	constructor(props) {
@@ -14,7 +25,6 @@ export default class Table extends Component {
 		this.state = {
 			items: null,
 			totalCount: null,
-			itemsPerPage: Table.DisplayItemsPerPageCount,
 
 			pageNumberText: (this.props.pageNumber > 1) ? this.props.pageNumber : 1,
 			pageNumber: (this.props.pageNumber > 1) ? this.props.pageNumber : 1,
@@ -48,7 +58,7 @@ export default class Table extends Component {
 	}
 
 	calculateItemsPerPage = () => {
-		if (this.props.itemsPerPageSelector || Table.DisplayItemsPerPageSelector) {
+		if (this.isDisplayItemsPerPageSelector()) {
 			return Table.DisplayItemsPerPageCount;
 		}
 
@@ -186,35 +196,68 @@ export default class Table extends Component {
 		}
 	}
 
+	isDisplayItemsPerPageSelector = () => {
+		if (this.props.itemsPerPageSelector === true) {
+			return true;
+		}
+
+		if (this.props.itemsPerPageSelector === false) {
+			return false;
+		}
+
+		return Table.DisplayItemsPerPageSelector;
+	}
+
 	renderPaginator = () => {
-		const pageCount = Math.floor(this.state.totalCount / this.calculateItemsPerPage()) + ((this.calculateItemsPerPage() % this.state.totalCount) ? 1 : 0);
+		if (this.isDisplayItemsPerPageSelector()) {
+			return (
+				<Row className="align-items-center">
+					{this.renderPaginator_Dropdown(3, {paddingLeft: '0.1rem'})}
+					{this.renderPaginator_Label(6, {textAlign: 'center'})}
+					{(this.state.totalCount > this.calculateItemsPerPage()) ? this.renderPaginator_Switcher(3, {paddingRight: 0}) : null}
+				</Row>
+			);
+		} else {
+			return (
+				<Row className="align-items-center">
+					{this.renderPaginator_Label(9, {paddingLeft: '0.1rem'})}
+					{(this.state.totalCount > this.calculateItemsPerPage()) ? this.renderPaginator_Switcher(3, {paddingRight: 0}) : null}
+				</Row>
+			);
+		}
+	}
+
+	renderPaginator_Switcher = (gridSize, style) => {
 		return (
-			<Row className="align-items-center">
-				<Col md={9} style={{paddingLeft: '0.1rem'}}>
-					Viewing items <strong>{(this.state.pageNumber - 1) * this.calculateItemsPerPage() + 1} - {Math.min(this.state.pageNumber * this.calculateItemsPerPage(), this.state.totalCount)}</strong> of <strong>{this.state.totalCount}</strong> on
-					page <strong>{this.state.pageNumber}</strong> of <strong>{pageCount}</strong>
-				</Col>
-				{(this.state.totalCount > this.calculateItemsPerPage()) && (
-					<Col md={3} style={{paddingRight: 0}}>
-						<Pagination size="sm" className="justify-content-end">
-							<Pagination.First onClick={this.first_Click} />
-							<Pagination.Prev onClick={this.previous_Click} />
-							<FormControl
-								ref={this.pageNumberTextbox}
-								type="text"
-								size="sm"
-								value={this.state.pageNumberText}
-								onBlur={event => this.setPageNumber(this.state.pageNumberText)}
-								onFocus={event => event.target.select()}
-								onChange={event => this.setState({pageNumberText: event.target.value.replace(/\D/g,'')})}
-								onKeyDown={this.pageNumberText_KeyPress}
-								style={{width: '40px', textAlign: 'center', borderRadius: 0, borderLeftWidth: 0}}/>
-							<Pagination.Next onClick={this.next_Click} />
-							<Pagination.Last onClick={this.last_Click} />
-						</Pagination>
-					</Col>
-				)}
-			</Row>
+			<Col md={gridSize} style={style}>
+				<Pagination size="sm" className="justify-content-end">
+					<Pagination.First onClick={this.first_Click} />
+					<Pagination.Prev onClick={this.previous_Click} />
+					<FormControl
+						ref={this.pageNumberTextbox}
+						type="text"
+						size="sm"
+						value={this.state.pageNumberText}
+						onBlur={() => this.setPageNumber(this.state.pageNumberText)}
+						onFocus={event => event.target.select()}
+						onChange={event => this.setState({pageNumberText: event.target.value.replace(/\D/g,'')})}
+						onKeyDown={this.pageNumberText_KeyPress}
+						style={{width: '40px', textAlign: 'center', borderRadius: 0, borderLeftWidth: 0}}/>
+					<Pagination.Next onClick={this.next_Click} />
+					<Pagination.Last onClick={this.last_Click} />
+				</Pagination>
+			</Col>
+		);
+	}
+
+	renderPaginator_Label = (gridSize, style) => {
+		const pageCount = Math.floor(this.state.totalCount / this.calculateItemsPerPage()) + ((this.calculateItemsPerPage() % this.state.totalCount) ? 1 : 0);
+
+		return (
+			<Col md={gridSize} style={style}>
+				Viewing items <strong>{(this.state.pageNumber - 1) * this.calculateItemsPerPage() + 1} - {Math.min(this.state.pageNumber * this.calculateItemsPerPage(), this.state.totalCount)}</strong> of <strong>{this.state.totalCount}</strong> on
+				page <strong>{this.state.pageNumber}</strong> of <strong>{pageCount}</strong>
+			</Col>
 		);
 	}
 
@@ -227,20 +270,17 @@ export default class Table extends Component {
 		Table.DisplayItemsPerPageCount = itemsPerPage;
 	}
 
-	renderPaginatorDropdown = () => {
+	renderPaginator_Dropdown = (gridSize, style) => {
 		return (
-			<Row className="align-items-center">
-				<Col md={6} style={{paddingLeft: '0.1rem'}}>
-					View &nbsp;
-					<select value={this.state.itemsPerPage} onChange={event => this.paginatorDropdown_Change(event)}>
-						<option value="10">10</option>
-						<option value="25">25</option>
-						<option value="50">50</option>
-						<option value="100">100</option>
-					</select>
-					&nbsp; items per page
-				</Col>
-			</Row>
+			<Col md={gridSize} style={style}>
+				Items per page: &nbsp;
+				<select value={this.calculateItemsPerPage()} onChange={event => this.paginatorDropdown_Change(event)}>
+					<option value="10">10</option>
+					<option value="25">25</option>
+					<option value="50">50</option>
+					<option value="100">100</option>
+				</select>
+			</Col>
 		);
 	}
 
@@ -308,7 +348,6 @@ export default class Table extends Component {
 						{(!this.state.items.length && this.props.renderNoDataTbody) ? this.props.renderNoDataTbody() : this.renderItems()}
 					</ReactBootstrapTable>
 				</Row>
-				{(this.props.itemsPerPageSelector || Table.DisplayItemsPerPageSelector) ? this.renderPaginatorDropdown() : null}
 			</Container>
 		);
 	}
