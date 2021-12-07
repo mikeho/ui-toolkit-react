@@ -6,6 +6,13 @@ import ResultParameter from "../../models/ResultParameter";
 
 export default class Table extends Component {
 	/**
+	 * This is a global setting deciding whether or not we are displaying the Page Count
+	 * This CAN be overridden by the displayPageCount prop
+	 * @type {boolean}
+	 */
+	static DisplayPageCount = false;
+
+	/**
 	 * This is a global setting deciding whether or not we are displaying the ItemsPerPage selector
 	 * This CAN be overridden by the itemsPerPageSelector prop
 	 * @type {boolean}
@@ -197,15 +204,27 @@ export default class Table extends Component {
 	}
 
 	isDisplayItemsPerPageSelector = () => {
-		if (this.props.itemsPerPageSelector === true) {
+		if (this.props.displayItemsPerPageSelector === true) {
 			return true;
 		}
 
-		if (this.props.itemsPerPageSelector === false) {
+		if (this.props.displayItemsPerPageSelector === false) {
 			return false;
 		}
 
 		return Table.DisplayItemsPerPageSelector;
+	}
+
+	isDisplayPageCount = () => {
+		if (this.props.displayPageCount === true) {
+			return true;
+		}
+
+		if (this.props.displayPageCount === false) {
+			return false;
+		}
+
+		return Table.DisplayPageCount;
 	}
 
 	renderPaginator = () => {
@@ -255,8 +274,16 @@ export default class Table extends Component {
 
 		return (
 			<Col md={gridSize} style={style}>
-				Viewing items <strong>{(this.state.pageNumber - 1) * this.calculateItemsPerPage() + 1} - {Math.min(this.state.pageNumber * this.calculateItemsPerPage(), this.state.totalCount)}</strong> of <strong>{this.state.totalCount}</strong> on
-				page <strong>{this.state.pageNumber}</strong> of <strong>{pageCount}</strong>
+				Viewing items{' '}
+				<strong>
+					{(this.state.pageNumber - 1) * this.calculateItemsPerPage() + 1} - {Math.min(this.state.pageNumber * this.calculateItemsPerPage(), this.state.totalCount)}
+				</strong>{' '}
+				of <strong>{this.state.totalCount}</strong>
+				{this.isDisplayPageCount() && (
+					<>
+						{' '}on page <strong>{this.state.pageNumber}</strong> of <strong>{pageCount}</strong>
+					</>
+				)}
 			</Col>
 		);
 	}
@@ -365,7 +392,8 @@ Table.propTypes = {
 	renderNoDataTbody: PropTypes.func,
 
 	itemsPerPage: PropTypes.number,
-	itemsPerPageSelector: PropTypes.bool,
+	displayItemsPerPageSelector: PropTypes.bool,
+	displayPageCount: PropTypes.bool,
 
 	pageNumber: PropTypes.number,
 	orderByToken: PropTypes.string,
