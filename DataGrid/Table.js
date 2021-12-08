@@ -349,7 +349,7 @@ export default class Table extends Component {
 
 		return (
 			<Container fluid>
-				{this.calculateItemsPerPage() && this.renderPaginator()}
+				{this.props.itemsPerPage && this.renderPaginator()}
 				<Row>
 					<ReactBootstrapTable
 						className={this.props.className !== undefined ? this.props.className : null}
