@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
-import {Col, Container, FormControl, Pagination, Row, Table as ReactBootstrapTable} from "react-bootstrap";
+import {FormControl, Pagination, Table as ReactBootstrapTable} from "react-bootstrap";
 import Header from "./Header";
 import ResultParameter from "../../models/ResultParameter";
 
@@ -230,26 +230,32 @@ export default class Table extends Component {
 	renderPaginator = () => {
 		if (this.isDisplayItemsPerPageSelector()) {
 			return (
-				<Row className="align-items-center">
-					{this.renderPaginator_Dropdown(3, {paddingLeft: '0.1rem'})}
-					{this.renderPaginator_Label(6, {textAlign: 'center'})}
-					{(this.state.totalCount > this.calculateItemsPerPage()) ? this.renderPaginator_Switcher(3, {paddingRight: 0}) : null}
-				</Row>
+				<div className="d-block d-md-flex justify-content-between align-items-center mb-2">
+					<div className="d-flex align-items-center justify-content-between justify-content-md-start">
+						{this.renderPaginator_Dropdown()}
+						{this.renderPaginator_Label()}
+					</div>
+					{this.state.totalCount > this.calculateItemsPerPage()
+						? this.renderPaginator_Switcher()
+						: null}
+				</div>
 			);
 		} else {
 			return (
-				<Row className="align-items-center">
-					{this.renderPaginator_Label(9, {paddingLeft: '0.1rem'})}
-					{(this.state.totalCount > this.calculateItemsPerPage()) ? this.renderPaginator_Switcher(3, {paddingRight: 0}) : null}
-				</Row>
+				<div className="d-flex justify-content-between align-items-center mb-2">
+					{this.renderPaginator_Label()}
+					{this.state.totalCount > this.calculateItemsPerPage()
+						? this.renderPaginator_Switcher()
+						: null}
+				</div>
 			);
 		}
 	}
 
-	renderPaginator_Switcher = (gridSize, style) => {
+	renderPaginator_Switcher = () => {
 		return (
-			<Col md={gridSize} style={style}>
-				<Pagination size="sm" className="justify-content-end">
+			<div>
+				<Pagination size="sm" className="justify-content-end mb-0">
 					<Pagination.First onClick={this.first_Click} />
 					<Pagination.Prev onClick={this.previous_Click} />
 					<FormControl
@@ -265,15 +271,15 @@ export default class Table extends Component {
 					<Pagination.Next onClick={this.next_Click} />
 					<Pagination.Last onClick={this.last_Click} />
 				</Pagination>
-			</Col>
+			</div>
 		);
 	}
 
-	renderPaginator_Label = (gridSize, style) => {
+	renderPaginator_Label = () => {
 		const pageCount = Math.floor(this.state.totalCount / this.calculateItemsPerPage()) + ((this.calculateItemsPerPage() % this.state.totalCount) ? 1 : 0);
 
 		return (
-			<Col md={gridSize} style={style}>
+			<div>
 				Viewing items{' '}
 				<strong>
 					{(this.state.pageNumber - 1) * this.calculateItemsPerPage() + 1} - {Math.min(this.state.pageNumber * this.calculateItemsPerPage(), this.state.totalCount)}
@@ -284,7 +290,7 @@ export default class Table extends Component {
 						{' '}on page <strong>{this.state.pageNumber}</strong> of <strong>{pageCount}</strong>
 					</>
 				)}
-			</Col>
+			</div>
 		);
 	}
 
@@ -297,9 +303,9 @@ export default class Table extends Component {
 		Table.DisplayItemsPerPageCount = itemsPerPage;
 	}
 
-	renderPaginator_Dropdown = (gridSize, style) => {
+	renderPaginator_Dropdown = () => {
 		return (
-			<Col md={gridSize} style={style}>
+			<div style={{ marginRight: '0.5rem' }}>
 				Items per page: &nbsp;
 				<select value={this.calculateItemsPerPage()} onChange={event => this.paginatorDropdown_Change(event)}>
 					<option value="10">10</option>
@@ -307,7 +313,7 @@ export default class Table extends Component {
 					<option value="50">50</option>
 					<option value="100">100</option>
 				</select>
-			</Col>
+			</div>
 		);
 	}
 
@@ -348,34 +354,32 @@ export default class Table extends Component {
 		}
 
 		return (
-			<Container fluid>
+			<div>
 				{this.props.itemsPerPage && this.renderPaginator()}
-				<Row>
-					<ReactBootstrapTable
-						className={this.props.className !== undefined ? this.props.className : null}
-						bordered={this.props.bordered === true}
-						borderless={this.props.borderless === true}
-						striped={this.props.striped === true}
-						hover={this.props.hover === true}
-						size={this.props.size !== undefined ? this.props.size : null}
-						variant={this.props.variant !== undefined ? this.props.variant : null}
-						responsive={this.props.responsive !== undefined ? this.props.responsive : null}
-					>
-						<thead>
-							<tr>
-								{React.Children.map(children, (child) =>
-									React.cloneElement(child, {
-										orderByClick: this.orderByClick,
-										currentOrderByToken: this.state.orderByToken,
-										currentOrderByAscendingFlag: this.state.orderAscendingFlag
-									})
-								)}
-							</tr>
-						</thead>
-						{(!this.state.items.length && this.props.renderNoDataTbody) ? this.props.renderNoDataTbody() : this.renderItems()}
-					</ReactBootstrapTable>
-				</Row>
-			</Container>
+				<ReactBootstrapTable
+					className={this.props.className !== undefined ? this.props.className : null}
+					bordered={this.props.bordered === true}
+					borderless={this.props.borderless === true}
+					striped={this.props.striped === true}
+					hover={this.props.hover === true}
+					size={this.props.size !== undefined ? this.props.size : null}
+					variant={this.props.variant !== undefined ? this.props.variant : null}
+					responsive={this.props.responsive !== undefined ? this.props.responsive : null}
+				>
+					<thead>
+						<tr>
+							{React.Children.map(children, (child) =>
+								React.cloneElement(child, {
+									orderByClick: this.orderByClick,
+									currentOrderByToken: this.state.orderByToken,
+									currentOrderByAscendingFlag: this.state.orderAscendingFlag
+								})
+							)}
+						</tr>
+					</thead>
+					{(!this.state.items.length && this.props.renderNoDataTbody) ? this.props.renderNoDataTbody() : this.renderItems()}
+				</ReactBootstrapTable>
+			</div>
 		);
 	}
 }
