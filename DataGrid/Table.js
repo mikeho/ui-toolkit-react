@@ -37,6 +37,7 @@ export default class Table extends Component {
 			pageNumber: (this.props.pageNumber > 1) ? this.props.pageNumber : 1,
 			orderByToken: this.props.orderByToken,
 			orderAscendingFlag: (this.props.orderAscendingFlag !== false),
+			displayItemsPerPageCount: Table.DisplayItemsPerPageCount
 		};
 
 		this.pageNumberTextbox = React.createRef();
@@ -66,7 +67,7 @@ export default class Table extends Component {
 
 	calculateItemsPerPage = () => {
 		if (this.isDisplayItemsPerPageSelector()) {
-			return Table.DisplayItemsPerPageCount;
+			return this.state.displayItemsPerPageCount;
 		}
 
 		if (this.props.itemsPerPage) {
@@ -300,7 +301,7 @@ export default class Table extends Component {
 			itemsPerPage
 		}, this.reload);
 
-		Table.DisplayItemsPerPageCount = itemsPerPage;
+		this.setState({ displayItemsPerPageCount: itemsPerPage });
 	}
 
 	renderPaginator_Dropdown = () => {
