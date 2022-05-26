@@ -37,7 +37,7 @@ export default class Table extends Component {
 			pageNumber: (this.props.pageNumber > 1) ? this.props.pageNumber : 1,
 			orderByToken: this.props.orderByToken,
 			orderAscendingFlag: (this.props.orderAscendingFlag !== false),
-			displayItemsPerPageCount: Table.DisplayItemsPerPageCount
+			displayItemsPerPageCount: this.props.itemsPerPage || Table.DisplayItemsPerPageCount
 		};
 
 		this.pageNumberTextbox = React.createRef();
