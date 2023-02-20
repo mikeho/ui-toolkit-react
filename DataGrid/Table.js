@@ -26,6 +26,21 @@ export default class Table extends Component {
 	 */
 	static DisplayItemsPerPageCount = 25;
 
+	static HeaderFixStyle = {
+		position: 'sticky',
+		margin: 0,
+		backgroundColor: '#fff',
+		top: '39px',
+		boxShadow: 'inset 0 1px 0 #dee2e6, inset 0 -1px 0 #dee2e6'
+	};
+
+	static PaginationFixStyle = {
+		position: 'sticky',
+		margin: 0,
+		backgroundColor: '#fff',
+		top: '0px'
+	};
+
 	constructor(props) {
 		super(props);
 
@@ -229,9 +244,12 @@ export default class Table extends Component {
 	}
 
 	renderPaginator = () => {
+		const isHeaderFixed = this.props.headerFixed;
+
 		if (this.isDisplayItemsPerPageSelector()) {
 			return (
-				<div className="d-block d-md-flex justify-content-between align-items-center mb-2">
+				<div className="d-block d-md-flex justify-content-between align-items-center pb-2" 
+							style={isHeaderFixed ? Table.PaginationFixStyle : null}>
 					<div className="d-flex align-items-center justify-content-between justify-content-md-start">
 						{this.renderPaginator_Dropdown()}
 						{this.renderPaginator_Label()}
@@ -243,7 +261,8 @@ export default class Table extends Component {
 			);
 		} else {
 			return (
-				<div className="d-flex justify-content-between align-items-center mb-2">
+				<div className="d-flex justify-content-between align-items-center pb-2"
+							style={isHeaderFixed ? Table.PaginationFixStyle : null}>
 					{this.renderPaginator_Label()}
 					{this.state.totalCount > this.calculateItemsPerPage()
 						? this.renderPaginator_Switcher()
@@ -354,6 +373,8 @@ export default class Table extends Component {
 			}
 		}
 
+		const isHeaderFixed = this.props.headerFixed;
+
 		return (
 			<div>
 				{this.props.itemsPerPage && this.renderPaginator()}
@@ -367,7 +388,7 @@ export default class Table extends Component {
 					variant={this.props.variant !== undefined ? this.props.variant : null}
 					responsive={this.props.responsive !== undefined ? this.props.responsive : null}
 				>
-					<thead>
+					<thead style={isHeaderFixed ? Table.HeaderFixStyle : null}>
 						<tr>
 							{React.Children.map(children, (child) =>
 								React.cloneElement(child, {
@@ -412,4 +433,5 @@ Table.propTypes = {
 	size: PropTypes.string,
 	variant: PropTypes.string,
 	responsive: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+	headerFixed: PropTypes.bool
 };
