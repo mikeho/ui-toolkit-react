@@ -374,6 +374,7 @@ export default class Table extends Component {
 		}
 
 		const isHeaderFixed = this.props.headerFixed;
+		const isShowPaginator = this.state.totalCount > this.calculateItemsPerPage()
 
 		return (
 			<div>
@@ -388,7 +389,7 @@ export default class Table extends Component {
 					variant={this.props.variant !== undefined ? this.props.variant : null}
 					responsive={this.props.responsive !== undefined ? this.props.responsive : null}
 				>
-					<thead style={isHeaderFixed ? Table.HeaderFixStyle : null}>
+					<thead style={isHeaderFixed ? {...Table.HeaderFixStyle, top: isShowPaginator ? '39px' : '32px'} : null}>
 						<tr>
 							{React.Children.map(children, (child) =>
 								React.cloneElement(child, {
