@@ -248,7 +248,7 @@ export default class Table extends Component {
 
 		if (this.isDisplayItemsPerPageSelector()) {
 			return (
-				<div className="d-block d-md-flex justify-content-between align-items-center pb-2" 
+				<div className="d-block d-md-flex justify-content-between align-items-center pb-2"
 							style={isHeaderFixed ? Table.PaginationFixStyle : null}>
 					<div className="d-flex align-items-center justify-content-between justify-content-md-start">
 						{this.renderPaginator_Dropdown()}
@@ -367,7 +367,7 @@ export default class Table extends Component {
 		let children = [];
 		if (this.props.children) {
 			if (this.props.children.length) {
-				children = this.props.children.filter(child => (child.type === Header));
+				children = this.props.children.filter(child => (child && (child.type === Header)));
 			} else if (this.props.children.type === Header) {
 				children = [this.props.children];
 			}
