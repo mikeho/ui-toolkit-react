@@ -15,6 +15,20 @@ export default class Utilities {
 	}
 
 	/**
+	 * @param {string} text
+	 * @return {string}
+	 */
+	static sentenceCaseFromUnderscoreCase(text) {
+		// Replace underscores with spaces
+		text = text.replace(/_/g, ' ');
+
+		// Convert the first character of each word to uppercase
+		return text.replace(/\b\w/g, function(char) {
+			return char.toUpperCase();
+		});
+	}
+
+	/**
 	 * @param {Date} date
 	 * @return {string}
 	 */
